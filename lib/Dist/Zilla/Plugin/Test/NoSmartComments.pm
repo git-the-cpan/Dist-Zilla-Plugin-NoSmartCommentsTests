@@ -7,45 +7,15 @@
 #
 #   The GNU Lesser General Public License, Version 2.1, February 1999
 #
-package Dist::Zilla::Plugin::NoSmartCommentsTests;
+package Dist::Zilla::Plugin::Test::NoSmartComments;
 our $AUTHORITY = 'cpan:RSRCHBOY';
-# git description: 0.007-7-g03732ff
-$Dist::Zilla::Plugin::NoSmartCommentsTests::VERSION = '0.008'; # TRIAL
-
+$Dist::Zilla::Plugin::Test::NoSmartComments::VERSION = '0.008'; # TRIAL
 # ABSTRACT: Make sure no Smart::Comments escape into the wild
 
 use Moose;
 use namespace::autoclean;
-use MooseX::AttributeShortcuts;
 
-use autobox::Core;
-
-extends 'Dist::Zilla::Plugin::InlineFiles';
-
-with
-    'Dist::Zilla::Role::FileFinderUser' => {
-        default_finders => [qw { :InstallModules :ExecFiles :TestFiles }],
-    },
-    'Dist::Zilla::Role::TextTemplate',
-    ;
-
-around merged_section_data => sub {
-    my ($orig, $self) = (shift, shift);
-
-    ### invoke the original to get the sections...
-    my $data = $self->$orig(@_);
-
-    ### bail if no data...
-    return unless $data;
-
-    ### munge each section with our template engine...
-    my %stash = ( files => [ map { $_->name } $self->found_files->flatten ] );
-    do { $data->{$_} = \( $self->fill_in_string(${$data->{$_}}, { %stash }) ) }
-        for $data->keys;
-
-    ### $data
-    return $data;
-};
+extends 'Dist::Zilla::Plugin::NoSmartCommentsTests';
 
 __PACKAGE__->meta->make_immutable;
 !!42;
@@ -60,11 +30,11 @@ __PACKAGE__->meta->make_immutable;
 
 =head1 NAME
 
-Dist::Zilla::Plugin::NoSmartCommentsTests - Make sure no Smart::Comments escape into the wild
+Dist::Zilla::Plugin::Test::NoSmartComments - Make sure no Smart::Comments escape into the wild
 
 =head1 VERSION
 
-This document describes version 0.008 of Dist::Zilla::Plugin::NoSmartCommentsTests - released August 07, 2015 as part of Dist-Zilla-Plugin-NoSmartCommentsTests.
+This document describes version 0.008 of Dist::Zilla::Plugin::Test::NoSmartComments - released August 07, 2015 as part of Dist-Zilla-Plugin-NoSmartCommentsTests.
 
 =head1 SYNOPSIS
 
@@ -84,24 +54,15 @@ The name of this plugin has turned out to be somewhat misleading, I'm afraid:
 we don't actually test for the _existance_ of smart comments, rather we
 ensure that Smart::Comment is not used by any file checked.
 
-=head1 BUGS
-
-All complex software has bugs lurking in it, and this module is no exception.
-
-Please report any bugs to
-"bug-dist-zilla-plugin-nosmartcommentstests@rt.cpan.org", or through the web
-interface at <http://rt.cpan.org>.
-
-Patches and pull requests through GitHub are most welcome; our page and repo
-(same URI):
-
-    https://github.com/RsrchBoy/dist-zilla-plugin-nosmartcommentstests
-
 =head1 SEE ALSO
 
 Please see those modules/websites for more information related to this module.
 
 =over 4
+
+=item *
+
+L<Dist::Zilla::Plugin::NoSmartCommentsTests|Dist::Zilla::Plugin::NoSmartCommentsTests>
 
 =item *
 
@@ -156,17 +117,3 @@ This is free software, licensed under:
 =cut
 
 __DATA__
-___[ xt/release/no-smart-comments.t ]___
-#!/usr/bin/env perl
-
-use strict;
-use warnings;
-
-use Test::More 0.88;
-
-eval "use Test::NoSmartComments";
-plan skip_all => 'Test::NoSmartComments required for checking comment IQ'
-    if $@;
-
-{{ foreach my $file (@files) { $OUT .= qq{no_smart_comments_in("$file");\n} } }}
-done_testing();

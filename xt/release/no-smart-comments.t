@@ -18,7 +18,11 @@ eval "use Test::NoSmartComments";
 plan skip_all => 'Test::NoSmartComments required for checking comment IQ'
     if $@;
 
-no_smart_comments_in_all();
-no_smart_comments_in_tests();
+no_smart_comments_in("lib/Dist/Zilla/Plugin/NoSmartCommentsTests.pm");
+no_smart_comments_in("lib/Dist/Zilla/Plugin/Test/NoSmartComments.pm");
+no_smart_comments_in("t/00-compile.t");
+no_smart_comments_in("t/00-load.t");
+no_smart_comments_in("t/00-report-prereqs.dd");
+no_smart_comments_in("t/00-report-prereqs.t");
 
 done_testing();
